@@ -56,15 +56,11 @@ def analyser(dir,keyword):
                 for root, subFolders, files in os.walk(dirSMA+slash+app):
                     for file in files:
                         if file.endswith(".smali"):
-                            # print("smali file:"+file+"\n")
                             with open(os.path.join(root, file), 'r') as fin:
                                 for line in fin:
                                     if item in line:
                                         countYES = countYES+1
-                                        print(line+"\n")
-                                        print ("POSITIVE - APP:"+app+" with API call: "+item+" was found.\n")
-                                        print(str(countYES)+' -- in class: '+file)
-
+                                        print (str(countYES)+": POSITIVE - APP: "+app+" with API call: "+item+" was found in class: "+file+"\n")
                                         raise BreakIt
             except BreakIt:
                 pass
@@ -89,6 +85,8 @@ if __name__ == "__main__":
                     analyser(dir, BLE)
                 else:
                     analyser(dir, keyword)
-
+                # results()
+                    # Ask : do you want to generate a statisics report?
+                # printhtml()
     else:
         exit()
