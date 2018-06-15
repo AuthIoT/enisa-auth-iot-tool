@@ -39,13 +39,11 @@ def decoder(dir):
     print("All files decoded")
 
 def analyser(dir,keyword):
+    appChar=[]
+    passedCheck = {}
     countYES=0
     dirSMA = dir+slash+"SMALIS"
-
     toCheck=os.listdir(dirSMA)
-
-    countALL = len(toCheck)
-    print("Total number of apps found in the SMALIS folder:"+str(countALL))
 
     for app in toCheck:
 
@@ -60,10 +58,20 @@ def analyser(dir,keyword):
                                 for line in fin:
                                     if item in line:
                                         countYES = countYES+1
-                                        print (str(countYES)+": POSITIVE - APP: "+app+" with API call: "+item+" was found in class: "+file+"\n")
+                                        print (str(countYES)+": POSITIVE - APP: "+app+" with API call: "+item+" was found in class: "+file)
+
+                                        if not app in passedCheck:
+                                            passedCheck[app] = item
+                                        else:
+                                            appChar.append(item)
+                                            passedCheck[app] = appChar
+
                                         raise BreakIt
             except BreakIt:
                 pass
+
+    print("Total number of apps found in the SMALIS folder:"+str(len(toCheck)))
+    print("Total number of apps using in BLE: "+str(len(passedCheck)))
 
 if __name__ == "__main__":
 
