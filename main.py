@@ -3,11 +3,21 @@ import os
 import subprocess
 from os.path import splitext
 from collections import Counter
+from flask import Flask, jsonify, render_template
 
-BLE=["BluetoothDevice;->connectGatt","PAIRING_REQUEST","BluetoothDevice;->setPin","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
+BLE = ["BluetoothDevice;->connectGatt","PAIRING_REQUEST","BluetoothDevice;->setPin","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
+statistics = {}
+app = Flask(__name__)
+
+
+@app.route("/")
+def hello():
+
+    return render_template('report.html', result=statistics)
 
 
 class BreakIt(Exception): pass
+
 
 def getslash():
     global slash
@@ -21,6 +31,7 @@ def getslash():
         print('This OS is not supported yet.')
         exit()
     return slash
+
 
 def decoder(dir):
     dirSMA = dir+slash+"SMALIS"
@@ -39,6 +50,7 @@ def decoder(dir):
 
     print("All files decoded")
     return
+
 
 def analyser(dir,keyword):
     passedCheck = {}
@@ -81,14 +93,16 @@ def results(total,apps):
         all_lists = all_lists+list
 
     stats = Counter(all_lists)
-    print("\n Statistics: "+str(stats))
+    print("\nStatistics: "+str(stats))
 
     return stats
 
 
+def report():
+    app.run(debug=False)
+
+
 if __name__ == "__main__":
-
-
     print('Press D for decoding or A for analysis of decoded APKs.')
     choice = input()
 
@@ -107,6 +121,8 @@ if __name__ == "__main__":
                 else:
                     total,apps=analyser(dir, keyword)
                 statistics = results(total,apps)
-
+                print("Do you want to generate a statistics report? Y or N")
+                if input() == "Y":
+                    report()
     else:
         exit()

@@ -1,0 +1,22 @@
+body {  
+  background: white;
+}
+
+canvas {
+  border: 1px dotted lightgray;
+}
+
+.container{
+    position: absolute;
+    height: 100%;
+    width: 98%;
+}
+
+.chart-container {
+  height: 95%;
+  width: 40%;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  display:inline-block;
+  }
