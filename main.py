@@ -2,9 +2,9 @@ import platform
 import os
 import subprocess
 from os.path import splitext
+from collections import Counter
 
-BLE=["BluetoothDevice;->connectGatt","BluetoothDevice;->setPin","PAIRING_REQUEST","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
-
+BLE=["BluetoothDevice;->connectGatt","PAIRING_REQUEST","BluetoothDevice;->setPin","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
 
 
 class BreakIt(Exception): pass
@@ -34,7 +34,7 @@ def decoder(dir):
 
             #Decode the APK files into smalis, saves them in the created SMALIS folder
             decoding=subprocess.Popen("apktool d "+dir+slash+file+" -o "+dirSMA+slash+basefile, shell=True)
-            print("apktool d "+dir+slash+file+" -o "+dirSMA+slash+basefile)
+            # print("apktool d "+dir+slash+file+" -o "+dirSMA+slash+basefile)
             decoding.wait()
 
     print("All files decoded")
@@ -42,7 +42,6 @@ def decoder(dir):
 
 def analyser(dir,keyword):
     passedCheck = {}
-    countYES=0
     dirSMA = dir+slash+"SMALIS"
     toCheck=os.listdir(dirSMA)
 
@@ -68,7 +67,8 @@ def analyser(dir,keyword):
 
 
 def results(total,apps):
-    # Results
+    all_lists = []
+
     print("Total number of apps found in the SMALIS folder:"+str(len(total)))
     print("Total number of apps using BLE or one of the API calls: "+str(len(apps)))
     print("Apps Using BLE or one of the API calls: "+str(apps.keys()))
@@ -77,14 +77,13 @@ def results(total,apps):
         print("\nAPP: "+key)
         print(*value, sep="\n")
 
-    print("ALL VALUES: "+str(apps.values()))
+    for list in apps.values():
+        all_lists = all_lists+list
 
-    return
+    stats = Counter(all_lists)
+    print("\n Statistics: "+str(stats))
 
-# def printhtml():
-#
-#     # app.run(debug=False)
-#     return
+    return stats
 
 
 if __name__ == "__main__":
@@ -97,7 +96,7 @@ if __name__ == "__main__":
             print('Give the ABSOLUTE PATH to the APKs. eg. C:\Windows \n')
             dir=input()
             slash = getslash()
-            print("slash: "+slash)
+            # print("slash: "+slash)
             decoder(dir)
 
             if choice == 'A':
@@ -107,8 +106,7 @@ if __name__ == "__main__":
                     total,apps=analyser(dir, BLE)
                 else:
                     total,apps=analyser(dir, keyword)
-                results(total,apps)
-                    # Ask : do you want to generate a statisics report?
-                # printhtml()
+                statistics = results(total,apps)
+
     else:
         exit()
