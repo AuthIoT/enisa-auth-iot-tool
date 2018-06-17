@@ -2,9 +2,10 @@ import platform
 import os
 import subprocess
 from os.path import splitext
-import time
 
 BLE=["BluetoothDevice;->connectGatt","BluetoothDevice;->setPin","PAIRING_REQUEST","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
+
+
 
 class BreakIt(Exception): pass
 
@@ -37,9 +38,9 @@ def decoder(dir):
             decoding.wait()
 
     print("All files decoded")
+    return
 
 def analyser(dir,keyword):
-    appChar=[]
     passedCheck = {}
     countYES=0
     dirSMA = dir+slash+"SMALIS"
@@ -48,7 +49,7 @@ def analyser(dir,keyword):
     for app in toCheck:
 
         print('Evaluating', app)
-
+        appChar=[]
         for item in keyword:
             try:
                 for root, subFolders, files in os.walk(dirSMA+slash+app):
@@ -57,21 +58,34 @@ def analyser(dir,keyword):
                             with open(os.path.join(root, file), 'r') as fin:
                                 for line in fin:
                                     if item in line:
-                                        countYES = countYES+1
-                                        print (str(countYES)+": POSITIVE - APP: "+app+" with API call: "+item+" was found in class: "+file)
-
-                                        if not app in passedCheck:
-                                            passedCheck[app] = item
-                                        else:
-                                            appChar.append(item)
-                                            passedCheck[app] = appChar
-
+                                        print(" POSITIVE - APP: "+app+" with API call: "+item+" was found in class: "+file)
+                                        appChar.append(item)
+                                        passedCheck[app] = appChar
                                         raise BreakIt
             except BreakIt:
                 pass
+    return toCheck,passedCheck
 
-    print("Total number of apps found in the SMALIS folder:"+str(len(toCheck)))
-    print("Total number of apps using in BLE: "+str(len(passedCheck)))
+
+def results(total,apps):
+    # Results
+    print("Total number of apps found in the SMALIS folder:"+str(len(total)))
+    print("Total number of apps using BLE or one of the API calls: "+str(len(apps)))
+    print("Apps Using BLE or one of the API calls: "+str(apps.keys()))
+
+    for key,value in apps.items():
+        print("\nAPP: "+key)
+        print(*value, sep="\n")
+
+    print("ALL VALUES: "+str(apps.values()))
+
+    return
+
+# def printhtml():
+#
+#     # app.run(debug=False)
+#     return
+
 
 if __name__ == "__main__":
 
@@ -90,10 +104,10 @@ if __name__ == "__main__":
                 print('Give the API call keyword you want to search in the APKs or Press Enter to search for BLE API calls \n')
                 keyword = input()
                 if not keyword:
-                    analyser(dir, BLE)
+                    total,apps=analyser(dir, BLE)
                 else:
-                    analyser(dir, keyword)
-                # results()
+                    total,apps=analyser(dir, keyword)
+                results(total,apps)
                     # Ask : do you want to generate a statisics report?
                 # printhtml()
     else:
