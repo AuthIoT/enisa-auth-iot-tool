@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='report.css')}}" type="text/css">
+    <link rel="stylesheet" href="static/report.css" type="text/css">
     <script src="static/Chart.min.js"></script>
 </head>
    <body>
@@ -12,39 +12,29 @@
         <div class="chart-container">
             <canvas id="BLEChart" width="40" height="40" ></canvas>
         </div>
-        {% for key, value in result.items() %}
-            <p> {{ key }} </p>
-            <p> {{ value }} </p>
-         {% endfor %}
     </div>
     <script>
     var ctx1 = document.getElementById("ALLChart");
     var ctx2 = document.getElementById("BLEChart");
 
     var ALLChart = new Chart(ctx1, {
-    type: 'bar',
+    type: 'pie',
     data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: ["Using BLE", "Out of Scope"],
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
+           label: 'Total Apps',
+           data: [{{result['BluetoothDevice;->connectGatt']}}, {{result['Total']-result['BluetoothDevice;->connectGatt']}}],
+           backgroundColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)'
+
             ],
             borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
+                'rgba(54, 162, 235, 1)'
+                'rgba(255,99,132,1)'
+
             ],
-            borderWidth: 1
+           borderWidth: 1
         }]
     },
     options: {
@@ -60,27 +50,25 @@
 
 
     var BLEChart = new Chart(ctx2, {
-    type: 'pie',
+    type: 'doughnut',
     data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: ["Connect Gatt", "Pairing Request", "Set Pin", "Pairing Key", "Read or Write Characteristic"],
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
+            label: 'Using BLE',
+            data: [{{result['BluetoothDevice;->connectGatt']}}, {{result['PAIRING_REQUEST']}}, {{result['BluetoothDevice;->setPin']}}, {{result['PAIRING_KEY']}}, {{result['BluetoothGatt;->readCharacteristic']}} ],
             backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
             ],
             borderColor: [
                 'rgba(255,99,132,1)',
                 'rgba(54, 162, 235, 1)',
                 'rgba(255, 206, 86, 1)',
                 'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
+                'rgba(153, 102, 255, 1)'
             ],
             borderWidth: 1
         }]

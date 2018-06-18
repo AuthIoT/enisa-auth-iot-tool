@@ -7,8 +7,8 @@ from flask import Flask, jsonify, render_template
 
 BLE = ["BluetoothDevice;->connectGatt","PAIRING_REQUEST","BluetoothDevice;->setPin","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
 statistics = {}
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 @app.route("/")
 def hello():
@@ -121,6 +121,7 @@ if __name__ == "__main__":
                 else:
                     total,apps=analyser(dir, keyword)
                 statistics = results(total,apps)
+                statistics['Total'] = len(total)
                 print("Do you want to generate a statistics report? Y or N")
                 if input() == "Y":
                     report()

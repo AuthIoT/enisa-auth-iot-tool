@@ -1,5 +1,7 @@
-body {  
-  background: white;
+html,body {
+  background: #f9f9f9;
+  margin:auto;
+  padding:0;
 }
 
 canvas {
@@ -8,15 +10,16 @@ canvas {
 
 .container{
     position: absolute;
-    height: 100%;
-    width: 98%;
+    height: 99%;
+    width: 100%;
+    text-align:center;
+    margin:auto;
 }
 
 .chart-container {
   height: 95%;
   width: 40%;
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 2%;
   display:inline-block;
   }
