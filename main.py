@@ -3,7 +3,7 @@ import os
 import subprocess
 from os.path import splitext
 from collections import Counter
-from flask import Flask, jsonify, render_template
+from flask import Flask, render_template
 
 BLE = ["BluetoothDevice;->connectGatt","PAIRING_REQUEST","BluetoothDevice;->setPin","PAIRING_KEY","BluetoothGatt;->readCharacteristic","BluetoothGatt;->writeCharacteristic"]
 statistics = {}
@@ -40,14 +40,10 @@ def decoder(dir):
 
     for file in os.listdir(dir):
         if file.endswith(".apk"):
-
             basefile = splitext(file)[0]
-
             #Decode the APK files into smalis, saves them in the created SMALIS folder
             decoding=subprocess.Popen("apktool d "+dir+slash+file+" -o "+dirSMA+slash+basefile, shell=True)
-            # print("apktool d "+dir+slash+file+" -o "+dirSMA+slash+basefile)
             decoding.wait()
-
     print("All files decoded")
     return
 

@@ -12,10 +12,14 @@
         <div class="chart-container">
             <canvas id="BLEChart" width="40" height="40" ></canvas>
         </div>
+        <div class="chart-container">
+            <canvas id="RESChart" width="40" height="40" ></canvas>
+        </div>
     </div>
     <script>
     var ctx1 = document.getElementById("ALLChart");
     var ctx2 = document.getElementById("BLEChart");
+    var ctx3 = document.getElementById("RESChart");
 
     var ALLChart = new Chart(ctx1, {
     type: 'pie',
@@ -30,9 +34,8 @@
 
             ],
             borderColor: [
-                'rgba(54, 162, 235, 1)'
+                'rgba(54, 162, 235, 1)',
                 'rgba(255,99,132,1)'
-
             ],
            borderWidth: 1
         }]
@@ -55,7 +58,43 @@
         labels: ["Connect Gatt", "Pairing Request", "Set Pin", "Pairing Key", "Read or Write Characteristic"],
         datasets: [{
             label: 'Using BLE',
-            data: [{{result['BluetoothDevice;->connectGatt']}}, {{result['PAIRING_REQUEST']}}, {{result['BluetoothDevice;->setPin']}}, {{result['PAIRING_KEY']}}, {{result['BluetoothGatt;->readCharacteristic']}} ],
+            data: [{{result['BluetoothDevice;->connectGatt']}}, {{result['PAIRING_REQUEST']}}, {{result['BluetoothDevice;->setPin']}}, {{result['PAIRING_KEY']}}, {{[result['BluetoothGatt;->readCharacteristic'],result['BluetoothGatt;->writeCharacteristic']]|max}} ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+
+
+    var RESChart = new Chart(ctx3, {
+    type: 'doughnut',
+    data: {
+        labels: ["NO PAIRING, NO INTERACTION", "Interacts WITHOUT PAIRING", "Defines some PAIRING PARAMETERS,DOES NOT USE THEM", "Implements JUST WORKS", "Implements PASSKEY"],
+        datasets: [{
+            label: 'Analysis of BLE Use',
+            data: [{{result['BluetoothDevice;->connectGatt']-([result['BluetoothGatt;->readCharacteristic'],result['BluetoothGatt;->writeCharacteristic']]|max)}}, {{([result['BluetoothGatt;->readCharacteristic'],result['BluetoothGatt;->writeCharacteristic']]|max)-result['PAIRING_REQUEST']}}, {{result['PAIRING_REQUEST']-result['BluetoothDevice;->setPin']}}, {{result['BluetoothDevice;->setPin']-result['PAIRING_KEY']}}, {{result['PAIRING_KEY']}} ],
             backgroundColor: [
                 'rgba(255, 99, 132, 1)',
                 'rgba(54, 162, 235, 1)',
